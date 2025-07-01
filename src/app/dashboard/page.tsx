@@ -11,7 +11,7 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6">
       <header>
         <h1 className="font-headline text-3xl font-semibold tracking-tight">
-          Dashboard
+          Admin Dashboard
         </h1>
         <p className="text-muted-foreground">
           Here's a quick overview of your stats.

@@ -6,9 +6,9 @@ import { LayoutDashboard, Settings, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/user", label: "User", icon: User },
+  { href: "/dashboard", label: "Admin", icon: LayoutDashboard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
-  { href: "#", label: "Profile", icon: User }, // Placeholder
 ];
 
 export function MobileNav() {
