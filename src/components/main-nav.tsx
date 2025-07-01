@@ -8,6 +8,8 @@ import {
   User,
   ChevronRight,
   CircleUserRound,
+  CreditCard,
+  History,
 } from "lucide-react";
 
 import {
@@ -29,6 +31,8 @@ import {
 
 const userLinks = [
   { href: "/dashboard/user", label: "Dashboard", icon: User },
+  { href: "/dashboard/user/recharge", label: "Recharge", icon: CreditCard },
+  { href: "/dashboard/user/history", label: "History", icon: History },
   {
     href: "/dashboard/settings/profile",
     label: "Profile",
@@ -112,7 +116,7 @@ export function MainNav() {
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <SidebarMenuSub>
+                  <SidebarMenuSub className="pl-4">
                     {settingsLinks.subLinks.map((subLink) => (
                       <SidebarMenuSubItem key={subLink.href}>
                         <SidebarMenuSubButton
