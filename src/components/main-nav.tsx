@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Settings, User, ChevronRight } from "lucide-react";
+import {
+  LayoutDashboard,
+  Settings,
+  User,
+  ChevronRight,
+  CircleUserRound,
+} from "lucide-react";
 
 import {
   Collapsible,
@@ -21,7 +27,14 @@ import {
   SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 
-const userLinks = [{ href: "/dashboard/user", label: "Dashboard", icon: User }];
+const userLinks = [
+  { href: "/dashboard/user", label: "Dashboard", icon: User },
+  {
+    href: "/dashboard/settings/profile",
+    label: "Profile",
+    icon: CircleUserRound,
+  },
+];
 
 const adminLinks = [
   { href: "/dashboard", label: "Admin Dashboard", icon: LayoutDashboard },
@@ -32,7 +45,6 @@ const settingsLinks = {
   icon: Settings,
   basePath: "/dashboard/settings",
   subLinks: [
-    { href: "/dashboard/settings/profile", label: "Profile" },
     { href: "/dashboard/settings/operator", label: "Operator" },
     { href: "/dashboard/settings/notifications", label: "Notifications" },
   ],
@@ -80,40 +92,42 @@ export function MainNav() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
-          <Collapsible
-            asChild
-            defaultOpen={pathname.startsWith(settingsLinks.basePath)}
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  isActive={pathname.startsWith(settingsLinks.basePath)}
-                  className="w-full justify-between"
-                  tooltip={{ children: settingsLinks.label }}
-                >
-                  <div className="flex items-center gap-2">
-                    <settingsLinks.icon />
-                    <span>{settingsLinks.label}</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4 shrink-0 transition-transform duration-200 data-[state=open]:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {settingsLinks.subLinks.map((subLink) => (
-                    <SidebarMenuSubItem key={subLink.href}>
-                      <SidebarMenuSubButton
-                        asChild
-                        isActive={pathname === subLink.href}
-                      >
-                        <Link href={subLink.href}>{subLink.label}</Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
+          {settingsLinks.subLinks.length > 0 && (
+            <Collapsible
+              asChild
+              defaultOpen={pathname.startsWith(settingsLinks.basePath)}
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton
+                    isActive={pathname.startsWith(settingsLinks.basePath)}
+                    className="w-full justify-between"
+                    tooltip={{ children: settingsLinks.label }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <settingsLinks.icon />
+                      <span>{settingsLinks.label}</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 transition-transform duration-200 data-[state=open]:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {settingsLinks.subLinks.map((subLink) => (
+                      <SidebarMenuSubItem key={subLink.href}>
+                        <SidebarMenuSubButton
+                          asChild
+                          isActive={pathname === subLink.href}
+                        >
+                          <Link href={subLink.href}>{subLink.label}</Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+          )}
         </SidebarMenu>
       </SidebarGroup>
     </>
