@@ -50,7 +50,6 @@ const settingsLinks = {
   basePath: "/dashboard/settings",
   subLinks: [
     { href: "/dashboard/settings/operator", label: "Operator" },
-    { href: "/dashboard/settings/notifications", label: "Notifications" },
     { href: "/dashboard/settings/recharge-history", label: "Recharge History" },
     { href: "/dashboard/settings/manage-reseller", label: "Manage Reseller" },
     { href: "/dashboard/settings/trx-history", label: "Trx History" },
