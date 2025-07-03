@@ -1,3 +1,6 @@
+'use client';
+
+import { useAuth } from '@/context/AuthContext';
 import {
   Card,
   CardContent,
@@ -7,6 +10,8 @@ import {
 import { User, Wallet } from "lucide-react";
 
 export default function UserDashboardPage() {
+  const { user } = useAuth();
+
   return (
     <div className="flex flex-col gap-6">
       <header>
@@ -24,9 +29,9 @@ export default function UserDashboardPage() {
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">John Doe</div>
+            <div className="text-2xl font-bold">{user?.name}</div>
             <p className="text-xs text-muted-foreground">
-              user@example.com
+              {user?.email}
             </p>
           </CardContent>
         </Card>
@@ -36,7 +41,7 @@ export default function UserDashboardPage() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$1,250.00</div>
+            <div className="text-2xl font-bold">${user?.balance?.toFixed(2) ?? '0.00'}</div>
             <p className="text-xs text-muted-foreground">
               Available balance
             </p>
