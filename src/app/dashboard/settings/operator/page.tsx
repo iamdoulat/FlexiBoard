@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +15,27 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 export default function OperatorSettingsPage() {
+  const [rechargeMobileNumber, setRechargeMobileNumber] = useState("");
+  const [rechargeOperator, setRechargeOperator] = useState("");
+  const [balanceCheckOperator, setBalanceCheckOperator] = useState("");
+
+  const handleMobileNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const number = e.target.value;
+    setRechargeMobileNumber(number);
+
+    if (number.startsWith("017")) {
+      setRechargeOperator("gp");
+    } else if (number.startsWith("018")) {
+      setRechargeOperator("robi");
+    } else if (number.startsWith("016")) {
+      setRechargeOperator("airtel");
+    } else if (number.startsWith("019")) {
+      setRechargeOperator("banglalink");
+    } else {
+      setRechargeOperator("");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -32,7 +56,7 @@ export default function OperatorSettingsPage() {
             <form className="space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="operator-recharge">Operator</Label>
-                <Select>
+                <Select value={rechargeOperator} onValueChange={setRechargeOperator}>
                   <SelectTrigger id="operator-recharge">
                     <SelectValue placeholder="Select an operator" />
                   </SelectTrigger>
@@ -50,6 +74,8 @@ export default function OperatorSettingsPage() {
                   id="mobile-number"
                   type="tel"
                   placeholder="Enter mobile number"
+                  value={rechargeMobileNumber}
+                  onChange={handleMobileNumberChange}
                 />
               </div>
               <Button type="submit" className="w-full">
@@ -66,7 +92,7 @@ export default function OperatorSettingsPage() {
             <form className="space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="operator-balance">Operator</Label>
-                <Select>
+                <Select value={balanceCheckOperator} onValueChange={setBalanceCheckOperator}>
                   <SelectTrigger id="operator-balance">
                     <SelectValue placeholder="Select an operator" />
                   </SelectTrigger>
