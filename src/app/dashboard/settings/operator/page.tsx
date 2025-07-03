@@ -145,9 +145,9 @@ export default function OperatorSettingsPage() {
               <TableRow>
                 <TableHead className="w-[120px]">Operator</TableHead>
                 <TableHead>Code</TableHead>
-                <TableHead>2nd Part</TableHead>
-                <TableHead>3rd Part</TableHead>
-                <TableHead>4th Part</TableHead>
+                <TableHead>Mobile</TableHead>
+                <TableHead>Value</TableHead>
+                <TableHead>Pin Code</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -155,16 +155,16 @@ export default function OperatorSettingsPage() {
                 <TableRow key={operator}>
                   <TableCell className="font-medium">{operator}</TableCell>
                   <TableCell>
-                    <Input placeholder="1st part" />
+                    <Input placeholder="Code" />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="2nd part" />
+                    <Input placeholder="Mobile" />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="3rd part" />
+                    <Input placeholder="Value" />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="4th part" />
+                    <Input placeholder="Pin Code" />
                   </TableCell>
                 </TableRow>
               ))}
