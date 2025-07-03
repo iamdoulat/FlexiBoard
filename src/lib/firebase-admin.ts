@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import admin from 'firebase-admin';
 
 if (!admin.apps.length) {
   // When running in a Google Cloud environment like Firebase App Hosting,
