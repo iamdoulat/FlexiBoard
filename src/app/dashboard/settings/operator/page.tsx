@@ -31,6 +31,8 @@ export default function OperatorSettingsPage() {
       setRechargeOperator("airtel");
     } else if (number.startsWith("019")) {
       setRechargeOperator("banglalink");
+    } else if (number.startsWith("013")) {
+      setRechargeOperator("skitto");
     } else {
       setRechargeOperator("");
     }
@@ -65,6 +67,7 @@ export default function OperatorSettingsPage() {
                     <SelectItem value="gp">GP</SelectItem>
                     <SelectItem value="airtel">Airtel</SelectItem>
                     <SelectItem value="banglalink">Banglalink</SelectItem>
+                    <SelectItem value="skitto">Skitto</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -101,6 +104,7 @@ export default function OperatorSettingsPage() {
                     <SelectItem value="gp">GP</SelectItem>
                     <SelectItem value="airtel">Airtel</SelectItem>
                     <SelectItem value="banglalink">Banglalink</SelectItem>
+                    <SelectItem value="skitto">Skitto</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
