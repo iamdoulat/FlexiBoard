@@ -148,6 +148,7 @@ export default function OperatorSettingsPage() {
                 <TableHead>Mobile</TableHead>
                 <TableHead>Value</TableHead>
                 <TableHead>Pin Code</TableHead>
+                <TableHead>Device</TableHead>
                 <TableHead>Sim Slot</TableHead>
               </TableRow>
             </TableHeader>
@@ -166,6 +167,19 @@ export default function OperatorSettingsPage() {
                   </TableCell>
                   <TableCell>
                     <Input placeholder="Pin Code" />
+                  </TableCell>
+                  <TableCell>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Device" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="device1">Device 1</SelectItem>
+                        <SelectItem value="device2">Device 2</SelectItem>
+                        <SelectItem value="device3">Device 3</SelectItem>
+                        <SelectItem value="device4">Device 4</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell>
                     <Input placeholder="Sim Slot" />
@@ -188,6 +202,7 @@ export default function OperatorSettingsPage() {
                 <TableHead className="w-[120px]">Operator</TableHead>
                 <TableHead>Mobile Number</TableHead>
                 <TableHead>Code</TableHead>
+                <TableHead>Device</TableHead>
                 <TableHead>Sim Slot</TableHead>
               </TableRow>
             </TableHeader>
@@ -200,6 +215,19 @@ export default function OperatorSettingsPage() {
                   </TableCell>
                   <TableCell>
                     <Input placeholder="Code" />
+                  </TableCell>
+                  <TableCell>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Device" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="device1">Device 1</SelectItem>
+                        <SelectItem value="device2">Device 2</SelectItem>
+                        <SelectItem value="device3">Device 3</SelectItem>
+                        <SelectItem value="device4">Device 4</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell>
                     <Input placeholder="Sim Slot" />
