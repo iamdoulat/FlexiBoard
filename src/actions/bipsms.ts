@@ -47,7 +47,7 @@ export const checkBalance = async (settings: Partial<BalanceCheckSetting>): Prom
     }
 };
 
-export const getUssdHistory = async (options: { limit?: number; page?: number } = {}): Promise<{ data: any[] }> => {
+export const getUssdHistory = async (options: { limit?: number; page?: number } = {}): Promise<{ status: number, message: string, data: any[] }> => {
     const secret = process.env.BIPSMS_API_SECRET;
     const baseUrl = process.env.BIPSMS_API_BASE_GET_URL;
 
@@ -77,6 +77,10 @@ export const getUssdHistory = async (options: { limit?: number; page?: number } 
             throw new Error(data.error || "An unknown error occurred while fetching USSD history.");
         }
         
+        if (data.status !== 200) {
+            throw new Error(data.message || `API returned status ${data.status}`);
+        }
+
         return data;
     } catch (error) {
         console.error("BIPSMS GET API Error:", error);

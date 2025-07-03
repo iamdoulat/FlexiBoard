@@ -65,7 +65,7 @@ export default function OperatorSettingsPage() {
         
         if (completedItems.length > 0) {
             const formattedResult = completedItems.map(item => {
-              const cleanResponse = item.response.replace(/\r|\n/g, ' ').trim();
+              const cleanResponse = item.response.replace(/\r|\n/g, '').trim();
               return `ID: ${item.id}, Code: ${item.code}, Response: ${cleanResponse}, Status: ${item.status}`;
             }).join('\n\n');
             setResultMessage(formattedResult);
