@@ -1,7 +1,7 @@
 'use server';
 
 import type { BalanceCheckSetting } from "@/types/operator-settings";
-import { db } from "@/lib/firebase-admin";
+// import { db } from "@/lib/firebase-admin"; // Temporarily disabled to fix render error
 
 export const checkBalance = async (settings: Partial<BalanceCheckSetting>): Promise<{ message: string; [key: string]: any }> => {
     const secret = process.env.BIPSMS_API_SECRET;
@@ -82,6 +82,8 @@ export const getUssdHistory = async (options: { limit?: number; page?: number } 
             throw new Error(data.message || `API returned status ${data.status}`);
         }
 
+        /*
+        // The Firestore writing part is temporarily disabled to prevent a server render error.
         if (data.data && Array.isArray(data.data)) {
             const historyCollectionRef = db.collection('ussdHistory');
             const batch = db.batch();
@@ -104,6 +106,7 @@ export const getUssdHistory = async (options: { limit?: number; page?: number } 
             });
             await batch.commit();
         }
+        */
 
         return data;
     } catch (error) {
