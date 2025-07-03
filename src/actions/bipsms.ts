@@ -14,17 +14,22 @@ export const checkBalance = async (settings: Partial<BalanceCheckSetting>): Prom
         throw new Error("Incomplete settings for balance check. Please provide Device, SIM Slot, and Code.");
     }
 
-    const params = new URLSearchParams({
+    const body = new URLSearchParams({
         secret,
         device: settings.device,
         sim: settings.simSlot,
         code: settings.code,
     });
 
-    const url = `${baseUrl}?${params.toString()}`;
-
     try {
-        const response = await fetch(url);
+        const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body,
+        });
+
         const data = await response.json();
 
         if (!response.ok) {
