@@ -13,6 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function OperatorSettingsPage() {
   const [rechargeMobileNumber, setRechargeMobileNumber] = useState("");
@@ -37,6 +45,8 @@ export default function OperatorSettingsPage() {
       setRechargeOperator("");
     }
   };
+
+  const operators = ["ROBI", "GP", "Airtel", "Banglalink", "Skitto"];
 
   return (
     <div className="space-y-6">
@@ -124,6 +134,45 @@ export default function OperatorSettingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Recharge Operator Setting</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[120px]">Operator</TableHead>
+                <TableHead>1st Part</TableHead>
+                <TableHead>2nd Part</TableHead>
+                <TableHead>3rd Part</TableHead>
+                <TableHead>4th Part</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {operators.map((operator) => (
+                <TableRow key={operator}>
+                  <TableCell className="font-medium">{operator}</TableCell>
+                  <TableCell>
+                    <Input placeholder="1st part" />
+                  </TableCell>
+                  <TableCell>
+                    <Input placeholder="2nd part" />
+                  </TableCell>
+                  <TableCell>
+                    <Input placeholder="3rd part" />
+                  </TableCell>
+                  <TableCell>
+                    <Input placeholder="4th part" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Button className="mt-4 w-full">Save Settings</Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
