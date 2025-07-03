@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,11 +21,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  onRechargeSettingsUpdate, 
+  onBalanceCheckSettingsUpdate,
+  saveRechargeSetting,
+  saveBalanceCheckSetting
+} from "@/services/operator-settings";
+import type { RechargeSetting, BalanceCheckSetting } from "@/types/operator-settings";
 
 export default function OperatorSettingsPage() {
+  const { toast } = useToast();
   const [rechargeMobileNumber, setRechargeMobileNumber] = useState("");
   const [rechargeOperator, setRechargeOperator] = useState("");
   const [balanceCheckOperator, setBalanceCheckOperator] = useState("");
+
+  const [rechargeSettings, setRechargeSettings] = useState<Record<string, Partial<RechargeSetting>>>({});
+  const [balanceCheckSettings, setBalanceCheckSettings] = useState<Record<string, Partial<BalanceCheckSetting>>>({});
+  const [isRechargeSaving, setIsRechargeSaving] = useState(false);
+  const [isBalanceCheckSaving, setIsBalanceCheckSaving] = useState(false);
+
+  useEffect(() => {
+    const unsubscribeRecharge = onRechargeSettingsUpdate(setRechargeSettings);
+    const unsubscribeBalanceCheck = onBalanceCheckSettingsUpdate(setBalanceCheckSettings);
+
+    return () => {
+      unsubscribeRecharge();
+      unsubscribeBalanceCheck();
+    };
+  }, []);
 
   const handleMobileNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const number = e.target.value;
@@ -43,6 +67,58 @@ export default function OperatorSettingsPage() {
       setRechargeOperator("skitto");
     } else {
       setRechargeOperator("");
+    }
+  };
+
+  const handleRechargeSettingChange = (operator: string, field: keyof RechargeSetting, value: string) => {
+    setRechargeSettings(prev => ({
+      ...prev,
+      [operator.toUpperCase()]: {
+        ...prev[operator.toUpperCase()],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleBalanceCheckSettingChange = (operator: string, field: keyof BalanceCheckSetting, value: string) => {
+    setBalanceCheckSettings(prev => ({
+      ...prev,
+      [operator.toUpperCase()]: {
+        ...prev[operator.toUpperCase()],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSaveRechargeSettings = async () => {
+    setIsRechargeSaving(true);
+    try {
+      const savePromises = Object.entries(rechargeSettings).map(([operatorId, settings]) => 
+        saveRechargeSetting(operatorId, settings)
+      );
+      await Promise.all(savePromises);
+      toast({ title: "Success", description: "Recharge settings saved successfully." });
+    } catch (error) {
+      console.error("Error saving recharge settings:", error);
+      toast({ variant: "destructive", title: "Error", description: "Failed to save recharge settings." });
+    } finally {
+      setIsRechargeSaving(false);
+    }
+  };
+
+  const handleSaveBalanceCheckSettings = async () => {
+    setIsBalanceCheckSaving(true);
+    try {
+      const savePromises = Object.entries(balanceCheckSettings).map(([operatorId, settings]) => 
+        saveBalanceCheckSetting(operatorId, settings)
+      );
+      await Promise.all(savePromises);
+      toast({ title: "Success", description: "Balance check settings saved successfully." });
+    } catch (error) {
+      console.error("Error saving balance check settings:", error);
+      toast({ variant: "destructive", title: "Error", description: "Failed to save balance check settings." });
+    } finally {
+      setIsBalanceCheckSaving(false);
     }
   };
 
@@ -157,19 +233,19 @@ export default function OperatorSettingsPage() {
                 <TableRow key={operator}>
                   <TableCell className="font-medium">{operator}</TableCell>
                   <TableCell>
-                    <Input placeholder="Code" />
+                    <Input placeholder="Code" value={rechargeSettings[operator]?.code || ''} onChange={(e) => handleRechargeSettingChange(operator, 'code', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Mobile" />
+                    <Input placeholder="Mobile" value={rechargeSettings[operator]?.mobile || ''} onChange={(e) => handleRechargeSettingChange(operator, 'mobile', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Value" />
+                    <Input placeholder="Value" value={rechargeSettings[operator]?.value || ''} onChange={(e) => handleRechargeSettingChange(operator, 'value', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Pin Code" />
+                    <Input placeholder="Pin Code" value={rechargeSettings[operator]?.pinCode || ''} onChange={(e) => handleRechargeSettingChange(operator, 'pinCode', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Select>
+                    <Select value={rechargeSettings[operator]?.device || ''} onValueChange={(value) => handleRechargeSettingChange(operator, 'device', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Device" />
                       </SelectTrigger>
@@ -182,13 +258,15 @@ export default function OperatorSettingsPage() {
                     </Select>
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Sim Slot" />
+                    <Input placeholder="Sim Slot" value={rechargeSettings[operator]?.simSlot || ''} onChange={(e) => handleRechargeSettingChange(operator, 'simSlot', e.target.value)} />
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-          <Button className="mt-4 w-full">Save Settings</Button>
+          <Button className="mt-4 w-full" onClick={handleSaveRechargeSettings} disabled={isRechargeSaving}>
+            {isRechargeSaving ? 'Saving...' : 'Save Settings'}
+          </Button>
         </CardContent>
       </Card>
       <Card>
@@ -211,13 +289,13 @@ export default function OperatorSettingsPage() {
                 <TableRow key={operator}>
                   <TableCell className="font-medium">{operator}</TableCell>
                   <TableCell>
-                    <Input placeholder="Mobile Number" />
+                    <Input placeholder="Mobile Number" value={balanceCheckSettings[operator]?.mobileNumber || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'mobileNumber', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Code" />
+                    <Input placeholder="Code" value={balanceCheckSettings[operator]?.code || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'code', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Select>
+                    <Select value={balanceCheckSettings[operator]?.device || ''} onValueChange={(value) => handleBalanceCheckSettingChange(operator, 'device', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Device" />
                       </SelectTrigger>
@@ -230,13 +308,15 @@ export default function OperatorSettingsPage() {
                     </Select>
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Sim Slot" />
+                    <Input placeholder="Sim Slot" value={balanceCheckSettings[operator]?.simSlot || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'simSlot', e.target.value)} />
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-          <Button className="mt-4 w-full">Save Settings</Button>
+          <Button className="mt-4 w-full" onClick={handleSaveBalanceCheckSettings} disabled={isBalanceCheckSaving}>
+            {isBalanceCheckSaving ? 'Saving...' : 'Save Settings'}
+          </Button>
         </CardContent>
       </Card>
     </div>
