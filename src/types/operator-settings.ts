@@ -24,4 +24,5 @@ export interface UssdHistoryItem {
   created: number; // Unix timestamp
   device: string;
   sim: number;
+  mobileNumber?: string;
 }

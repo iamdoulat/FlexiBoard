@@ -88,7 +88,17 @@ export const getUssdHistory = async (options: { limit?: number; page?: number } 
             data.data.forEach((item: any) => {
                 if (item.id) {
                     const docRef = historyCollectionRef.doc(item.id.toString());
-                    const cleanItem = Object.fromEntries(Object.entries(item).filter(([_, v]) => v !== undefined && v !== null));
+                    
+                    // Extract mobile number from response
+                    const mobileNumberMatch = item.response?.match(/MSISDN:\s*(\d+)/);
+                    const mobileNumber = mobileNumberMatch ? mobileNumberMatch[1] : undefined;
+
+                    const historyItem = {
+                        ...item,
+                        mobileNumber: mobileNumber
+                    };
+                    
+                    const cleanItem = Object.fromEntries(Object.entries(historyItem).filter(([_, v]) => v !== undefined && v !== null));
                     batch.set(docRef, cleanItem, { merge: true });
                 }
             });

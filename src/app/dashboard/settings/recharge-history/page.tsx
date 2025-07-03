@@ -115,6 +115,7 @@ export default function RechargeHistoryPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Mobile Number</TableHead>
               <TableHead>Code</TableHead>
               <TableHead>Response</TableHead>
               <TableHead>Device</TableHead>
@@ -126,6 +127,7 @@ export default function RechargeHistoryPage() {
           <TableBody>
             {paginatedData.map((item) => (
               <TableRow key={item.id}>
+                <TableCell>{item.mobileNumber ?? 'N/A'}</TableCell>
                 <TableCell>{item.code}</TableCell>
                 <TableCell>{item.response}</TableCell>
                 <TableCell>{item.device?.slice(-6) ?? 'N/A'}</TableCell>
