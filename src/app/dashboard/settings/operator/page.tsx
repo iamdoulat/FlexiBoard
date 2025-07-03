@@ -188,6 +188,7 @@ export default function OperatorSettingsPage() {
                 <TableHead className="w-[120px]">Operator</TableHead>
                 <TableHead>Mobile Number</TableHead>
                 <TableHead>Code</TableHead>
+                <TableHead>Sim Slot</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -199,6 +200,9 @@ export default function OperatorSettingsPage() {
                   </TableCell>
                   <TableCell>
                     <Input placeholder="Code" />
+                  </TableCell>
+                  <TableCell>
+                    <Input placeholder="Sim Slot" />
                   </TableCell>
                 </TableRow>
               ))}
