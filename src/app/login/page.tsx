@@ -67,7 +67,7 @@ export default function LoginPage() {
                    <AlertDescription>{error}</AlertDescription>
                  </Alert>
               )}
-              <div className="grid gap-2">
+              <div className="grid gap-2" suppressHydrationWarning>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -78,7 +78,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="grid gap-2">
+              <div className="grid gap-2" suppressHydrationWarning>
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                   <Link

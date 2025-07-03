@@ -73,7 +73,7 @@ export default function SignupPage() {
                    <AlertDescription>{error}</AlertDescription>
                  </Alert>
               )}
-              <div className="grid gap-2">
+              <div className="grid gap-2" suppressHydrationWarning>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -84,7 +84,7 @@ export default function SignupPage() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="grid gap-2">
+              <div className="grid gap-2" suppressHydrationWarning>
                 <Label htmlFor="password">Password</Label>
                 <Input 
                   id="password" 
@@ -94,7 +94,7 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-               <div className="grid gap-2">
+               <div className="grid gap-2" suppressHydrationWarning>
                 <Label htmlFor="confirm-password">Confirm Password</Label>
                 <Input 
                   id="confirm-password" 
