@@ -5,7 +5,7 @@ import { db } from "@/lib/firebase-admin";
 
 export const checkBalance = async (settings: Partial<BalanceCheckSetting>): Promise<{ message: string; [key: string]: any }> => {
     const secret = process.env.BIPSMS_API_SECRET;
-    const baseUrl = process.env.BIPSMS_API_BASE_URL;
+    const baseUrl = process.env.BIPSMS_API_BASE_POST_URL;
 
     if (!secret || !baseUrl) {
         throw new Error("API credentials are not configured in environment variables.");
