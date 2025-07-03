@@ -1,8 +1,7 @@
 'use server';
 
 import type { BalanceCheckSetting } from "@/types/operator-settings";
-import { db } from "@/lib/firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase-admin";
 
 export const checkBalance = async (settings: Partial<BalanceCheckSetting>): Promise<{ message: string; [key: string]: any }> => {
     const secret = process.env.BIPSMS_API_SECRET;
@@ -84,16 +83,16 @@ export const getUssdHistory = async (options: { limit?: number; page?: number } 
         }
 
         if (data.data && Array.isArray(data.data)) {
-            const historyCollectionRef = collection(db, 'ussdHistory');
-            const savePromises = data.data.map((item: any) => {
-                if(item.id) {
-                    const docRef = doc(historyCollectionRef, item.id.toString());
+            const historyCollectionRef = db.collection('ussdHistory');
+            const batch = db.batch();
+            data.data.forEach((item: any) => {
+                if (item.id) {
+                    const docRef = historyCollectionRef.doc(item.id.toString());
                     const cleanItem = Object.fromEntries(Object.entries(item).filter(([_, v]) => v !== undefined && v !== null));
-                    return setDoc(docRef, cleanItem, { merge: true });
+                    batch.set(docRef, cleanItem, { merge: true });
                 }
-                return Promise.resolve();
             });
-            await Promise.all(savePromises);
+            await batch.commit();
         }
 
         return data;
