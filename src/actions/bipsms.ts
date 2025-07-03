@@ -46,3 +46,43 @@ export const checkBalance = async (settings: Partial<BalanceCheckSetting>): Prom
         throw new Error("An unknown error occurred while checking balance.");
     }
 };
+
+export const getUssdHistory = async (options: { limit?: number; page?: number } = {}): Promise<{ data: any[] }> => {
+    const secret = process.env.BIPSMS_API_SECRET;
+    const baseUrl = process.env.BIPSMS_API_BASE_GET_URL;
+
+    if (!secret || !baseUrl) {
+        throw new Error("API credentials for getting history are not configured in environment variables.");
+    }
+
+    const { limit = 10, page = 1 } = options;
+
+    const queryParams = new URLSearchParams({
+        secret,
+        limit: limit.toString(),
+        page: page.toString(),
+    });
+
+    try {
+        const response = await fetch(`${baseUrl}?${queryParams.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "An unknown error occurred while fetching USSD history.");
+        }
+        
+        return data;
+    } catch (error) {
+        console.error("BIPSMS GET API Error:", error);
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("An unknown error occurred while fetching USSD history.");
+    }
+};

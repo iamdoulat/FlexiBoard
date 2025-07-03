@@ -28,8 +28,19 @@ import {
   saveRechargeSetting,
   saveBalanceCheckSetting
 } from "@/services/operator-settings";
-import { checkBalance } from "@/actions/bipsms";
+import { checkBalance, getUssdHistory } from "@/actions/bipsms";
 import type { RechargeSetting, BalanceCheckSetting } from "@/types/operator-settings";
+
+type UssdHistoryItem = {
+  id: number;
+  device: string;
+  sim: number;
+  code: string;
+  response: string;
+  status: string;
+  created: number;
+};
+
 
 export default function OperatorSettingsPage() {
   const { toast } = useToast();
@@ -42,11 +53,37 @@ export default function OperatorSettingsPage() {
   const [isRechargeSaving, setIsRechargeSaving] = useState(false);
   const [isBalanceCheckSaving, setIsBalanceCheckSaving] = useState(false);
   const [isBalanceChecking, setIsBalanceChecking] = useState(false);
-  const [balanceCheckResult, setBalanceCheckResult] = useState<string | null>(null);
+  const [resultMessage, setResultMessage] = useState<string | null>("USSD results will be shown here.");
+
+  const fetchHistory = async () => {
+    try {
+      const historyData = await getUssdHistory({ limit: 10 });
+      if (historyData && Array.isArray(historyData.data)) {
+        const completedItems = historyData.data
+          .filter((item: UssdHistoryItem) => item.status === 'completed')
+          .slice(0, 2);
+        
+        if (completedItems.length > 0) {
+            setResultMessage(JSON.stringify(completedItems, null, 2));
+        } else {
+            setResultMessage("No recent completed requests found.");
+        }
+      } else {
+        setResultMessage("No history data received.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch USSD history", error);
+      const errorMessage = error instanceof Error ? error.message : "Could not fetch history.";
+      setResultMessage(`Error fetching history: ${errorMessage}`);
+      toast({ variant: "destructive", title: "History Error", description: errorMessage });
+    }
+  };
 
   useEffect(() => {
     const unsubscribeRecharge = onRechargeSettingsUpdate(setRechargeSettings);
     const unsubscribeBalanceCheck = onBalanceCheckSettingsUpdate(setBalanceCheckSettings);
+
+    fetchHistory();
 
     return () => {
       unsubscribeRecharge();
@@ -133,7 +170,7 @@ export default function OperatorSettingsPage() {
     }
 
     setIsBalanceChecking(true);
-    setBalanceCheckResult(null);
+    setResultMessage("Sending request...");
 
     try {
       const operatorId = balanceCheckOperator.toUpperCase();
@@ -145,14 +182,18 @@ export default function OperatorSettingsPage() {
 
       const result = await checkBalance(settings);
       
-      const resultMessage = result.message || JSON.stringify(result, null, 2);
-      setBalanceCheckResult(resultMessage);
-      toast({ title: "Success", description: "Balance check request sent." });
+      toast({ title: "Success", description: result.message || "Balance check request sent." });
+      setResultMessage("Request sent. Waiting for response...");
+
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      setResultMessage("Fetching latest results...");
+      await fetchHistory();
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
       console.error("Error checking balance:", error);
-      setBalanceCheckResult(`Error: ${errorMessage}`);
+      setResultMessage(`Error: ${errorMessage}`);
       toast({ variant: "destructive", title: "Error", description: errorMessage });
     } finally {
       setIsBalanceChecking(false);
@@ -246,10 +287,10 @@ export default function OperatorSettingsPage() {
             <Separator className="my-4" />
             <div className="space-y-2">
               <h3 className="text-sm font-medium">Result</h3>
-              <div className="rounded-md border bg-muted p-4 min-h-[60px]">
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                  {balanceCheckResult ?? "Balance will be shown here."}
-                </p>
+              <div className="rounded-md border bg-muted p-4 min-h-[120px]">
+                <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {resultMessage}
+                </pre>
               </div>
             </div>
           </CardContent>
