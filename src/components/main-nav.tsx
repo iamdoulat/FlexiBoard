@@ -49,7 +49,7 @@ const settingsLinks = {
   icon: Settings,
   basePath: "/dashboard/settings",
   subLinks: [
-    { href: "/dashboard/settings/operator", label: "Operator" },
+    { href: "/dashboard/settings/operator", label: "Operators" },
     { href: "/dashboard/settings/recharge-history", label: "Recharge History" },
     { href: "/dashboard/settings/manage-reseller", label: "Manage Reseller" },
     { href: "/dashboard/settings/trx-history", label: "Trx History" },
