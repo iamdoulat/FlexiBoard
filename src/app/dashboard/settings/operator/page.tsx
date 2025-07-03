@@ -173,6 +173,36 @@ export default function OperatorSettingsPage() {
           <Button className="mt-4 w-full">Save Settings</Button>
         </CardContent>
       </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Balance Check Setting</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[120px]">Operator</TableHead>
+                <TableHead>Mobile Number</TableHead>
+                <TableHead>Code</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {operators.map((operator) => (
+                <TableRow key={operator}>
+                  <TableCell className="font-medium">{operator}</TableCell>
+                  <TableCell>
+                    <Input placeholder="Mobile Number" />
+                  </TableCell>
+                  <TableCell>
+                    <Input placeholder="Code" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Button className="mt-4 w-full">Save Settings</Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
