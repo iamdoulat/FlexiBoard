@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,21 +14,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Mock data for recharge history
-const rechargeHistory = Array.from({ length: 100 }, (_, i) => ({
-  id: i + 1,
-  mobileNumber: `01${[3, 6, 7, 8, 9][Math.floor(Math.random() * 5)]}${Math.floor(Math.random() * 100000000)
-    .toString()
-    .padStart(8, '0')}`,
-  message: `Recharge of BDT ${Math.floor(Math.random() * 991) + 10} successful.`,
-  time: new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 24 * 30).toLocaleString(),
-  status: Math.random() > 0.1 ? "Success" : "Failed",
-}));
-
+type RechargeHistoryItem = {
+  id: number;
+  mobileNumber: string;
+  message: string;
+  time: string;
+  status: "Success" | "Failed";
+};
 
 export default function RechargeHistoryPage() {
+  const [rechargeHistory, setRechargeHistory] = useState<RechargeHistoryItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 50;
+
+  useEffect(() => {
+    const mockData = Array.from({ length: 100 }, (_, i) => ({
+      id: i + 1,
+      mobileNumber: `01${[3, 6, 7, 8, 9][Math.floor(Math.random() * 5)]}${Math.floor(Math.random() * 100000000)
+        .toString()
+        .padStart(8, '0')}`,
+      message: `Recharge of BDT ${Math.floor(Math.random() * 991) + 10} successful.`,
+      time: new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 24 * 30).toLocaleString(),
+      status: (Math.random() > 0.1 ? "Success" : "Failed") as "Success" | "Failed",
+    }));
+    setRechargeHistory(mockData);
+  }, []);
+
   const totalPages = Math.ceil(rechargeHistory.length / rowsPerPage);
 
   const paginatedData = rechargeHistory.slice(
@@ -87,7 +98,7 @@ export default function RechargeHistoryPage() {
           </Table>
            <div className="flex items-center justify-end space-x-2 pt-4">
              <span className="text-sm text-muted-foreground">
-                Page {currentPage} of {totalPages}
+                Page {currentPage} of {totalPages > 0 ? totalPages : 1}
             </span>
             <Button
               variant="outline"
@@ -101,7 +112,7 @@ export default function RechargeHistoryPage() {
               variant="outline"
               size="sm"
               onClick={handleNextPage}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages === 0}
             >
               Next
             </Button>
