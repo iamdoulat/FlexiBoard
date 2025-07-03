@@ -148,6 +148,7 @@ export default function OperatorSettingsPage() {
                 <TableHead>Mobile</TableHead>
                 <TableHead>Value</TableHead>
                 <TableHead>Pin Code</TableHead>
+                <TableHead>Sim Slot</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -165,6 +166,9 @@ export default function OperatorSettingsPage() {
                   </TableCell>
                   <TableCell>
                     <Input placeholder="Pin Code" />
+                  </TableCell>
+                  <TableCell>
+                    <Input placeholder="Sim Slot" />
                   </TableCell>
                 </TableRow>
               ))}
