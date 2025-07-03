@@ -10,7 +10,7 @@ import {
   User as FirebaseUser,
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, Timestamp } from 'firebase/firestore';
 import type { UserProfile } from '@/types/user';
 
 interface AuthContextType {
@@ -41,7 +41,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userDocRef = doc(db, 'users', authUser.uid);
         const unsubDoc = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
-            setUser(docSnap.data() as UserProfile);
+            const data = docSnap.data();
+            setUser({
+              uid: data.uid,
+              name: data.name,
+              email: data.email,
+              role: data.role,
+              createdAt: (data.createdAt as Timestamp).toDate()
+            });
           } else {
             setUser(null);
           }
