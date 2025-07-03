@@ -5,4 +5,5 @@ export interface UserProfile {
   email: string;
   role: 'admin' | 'user' | 'reseller';
   createdAt: Date;
+  balance?: number;
 }

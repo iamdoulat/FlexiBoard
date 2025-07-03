@@ -47,7 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               name: data.name,
               email: data.email,
               role: data.role,
-              createdAt: (data.createdAt as Timestamp).toDate()
+              createdAt: (data.createdAt as Timestamp).toDate(),
+              balance: data.balance
             });
           } else {
             setUser(null);
@@ -72,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         email: userCredential.user.email,
         role: 'user',
         createdAt: new Date(),
+        balance: 0,
       });
     }
     return userCredential;
