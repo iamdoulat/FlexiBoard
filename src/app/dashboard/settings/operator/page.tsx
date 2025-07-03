@@ -144,7 +144,7 @@ export default function OperatorSettingsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[120px]">Operator</TableHead>
-                <TableHead>1st Part</TableHead>
+                <TableHead>Code</TableHead>
                 <TableHead>2nd Part</TableHead>
                 <TableHead>3rd Part</TableHead>
                 <TableHead>4th Part</TableHead>
