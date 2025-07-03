@@ -59,18 +59,18 @@ export default function OperatorSettingsPage() {
     try {
       const historyData = await getUssdHistory({ limit: 10 });
       if (historyData && Array.isArray(historyData.data)) {
-        const completedItems = historyData.data
-          .filter((item: UssdHistoryItem) => item.status === 'completed')
+        const relevantItems = historyData.data
+          .filter((item: UssdHistoryItem) => item.status === 'completed' || item.status === 'pending')
           .slice(0, 2);
         
-        if (completedItems.length > 0) {
-            const formattedResult = completedItems.map(item => {
+        if (relevantItems.length > 0) {
+            const formattedResult = relevantItems.map(item => {
               const cleanResponse = item.response.replace(/\r|\n/g, '').trim();
               return `ID: ${item.id}, Code: ${item.code}, Response: ${cleanResponse}, Status: ${item.status}`;
             }).join('\n\n');
             setResultMessage(formattedResult);
         } else {
-            setResultMessage("No recent completed requests found.");
+            setResultMessage("No recent completed or pending requests found.");
         }
       } else {
         setResultMessage("No history data received.");
