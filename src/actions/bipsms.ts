@@ -1,6 +1,8 @@
 'use server';
 
 import type { BalanceCheckSetting } from "@/types/operator-settings";
+import { db } from "@/lib/firebase";
+import { collection, doc, setDoc } from "firebase/firestore";
 
 export const checkBalance = async (settings: Partial<BalanceCheckSetting>): Promise<{ message: string; [key: string]: any }> => {
     const secret = process.env.BIPSMS_API_SECRET;
@@ -55,7 +57,7 @@ export const getUssdHistory = async (options: { limit?: number; page?: number } 
         throw new Error("API credentials for getting history are not configured in environment variables.");
     }
 
-    const { limit = 10, page = 1 } = options;
+    const { limit = 200, page = 1 } = options;
 
     const queryParams = new URLSearchParams({
         secret,
@@ -79,6 +81,19 @@ export const getUssdHistory = async (options: { limit?: number; page?: number } 
         
         if (data.status !== 200) {
             throw new Error(data.message || `API returned status ${data.status}`);
+        }
+
+        if (data.data && Array.isArray(data.data)) {
+            const historyCollectionRef = collection(db, 'ussdHistory');
+            const savePromises = data.data.map((item: any) => {
+                if(item.id) {
+                    const docRef = doc(historyCollectionRef, item.id.toString());
+                    const cleanItem = Object.fromEntries(Object.entries(item).filter(([_, v]) => v !== undefined && v !== null));
+                    return setDoc(docRef, cleanItem, { merge: true });
+                }
+                return Promise.resolve();
+            });
+            await Promise.all(savePromises);
         }
 
         return data;

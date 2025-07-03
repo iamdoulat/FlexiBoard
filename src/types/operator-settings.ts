@@ -15,3 +15,13 @@ export interface BalanceCheckSetting {
     device: string;
     simSlot: string;
 }
+
+export interface UssdHistoryItem {
+  id: number;
+  code: string;
+  response: string;
+  status: string;
+  created: number; // Unix timestamp
+  device: string;
+  sim: number;
+}

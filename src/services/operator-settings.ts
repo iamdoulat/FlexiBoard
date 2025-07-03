@@ -1,9 +1,10 @@
-import { collection, doc, setDoc, onSnapshot, Unsubscribe, QuerySnapshot } from "firebase/firestore";
+import { collection, doc, setDoc, onSnapshot, Unsubscribe, QuerySnapshot, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { RechargeSetting, BalanceCheckSetting } from "@/types/operator-settings";
+import type { RechargeSetting, BalanceCheckSetting, UssdHistoryItem } from "@/types/operator-settings";
 
 const rechargeCollection = "rechargeOperatorSettings";
 const balanceCheckCollection = "balanceCheckSettings";
+const historyCollection = "ussdHistory";
 
 export const saveRechargeSetting = async (operatorId: string, data: Partial<RechargeSetting>) => {
     const docRef = doc(db, rechargeCollection, operatorId.toUpperCase());
@@ -34,5 +35,19 @@ export const onBalanceCheckSettingsUpdate = (callback: (data: Record<string, Bal
             settings[doc.id] = doc.data() as BalanceCheckSetting;
         });
         callback(settings);
+    });
+};
+
+export const onUssdHistoryUpdate = (callback: (data: UssdHistoryItem[]) => void): Unsubscribe => {
+    const q = query(collection(db, historyCollection), orderBy("created", "desc"), limit(200));
+    return onSnapshot(q, (querySnapshot) => {
+        const history: UssdHistoryItem[] = [];
+        querySnapshot.forEach((doc) => {
+            history.push(doc.data() as UssdHistoryItem);
+        });
+        callback(history);
+    }, (error) => {
+        console.error("Error listening to USSD history:", error);
+        callback([]);
     });
 };
