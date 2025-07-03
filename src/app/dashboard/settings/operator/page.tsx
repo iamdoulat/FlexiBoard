@@ -28,7 +28,7 @@ import {
   saveRechargeSetting,
   saveBalanceCheckSetting
 } from "@/services/operator-settings";
-import { checkBalance } from "@/services/bipsms";
+import { checkBalance } from "@/actions/bipsms";
 import type { RechargeSetting, BalanceCheckSetting } from "@/types/operator-settings";
 
 export default function OperatorSettingsPage() {
@@ -290,7 +290,7 @@ export default function OperatorSettingsPage() {
                     <Input placeholder="Pin Code" value={rechargeSettings[operator.toUpperCase()]?.pinCode || ''} onChange={(e) => handleRechargeSettingChange(operator, 'pinCode', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Select value={rechargeSettings[operator.toUpperCase()]?.device || ''} onValuechange={(value) => handleRechargeSettingChange(operator, 'device', value)}>
+                    <Select value={rechargeSettings[operator.toUpperCase()]?.device || ''} onValueChange={(value) => handleRechargeSettingChange(operator, 'device', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Device" />
                       </SelectTrigger>
