@@ -79,6 +79,7 @@ export default function ManageUserPage() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Joined On</TableHead>
@@ -88,7 +89,8 @@ export default function ManageUserPage() {
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.uid}>
-              <TableCell className="font-medium">{user.email}</TableCell>
+              <TableCell className="font-medium">{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
               <TableCell>{getRoleBadge(user.role)}</TableCell>
               <TableCell>{new Date(user.createdAt as Date).toLocaleString()}</TableCell>
               <TableCell className="text-muted-foreground">{user.uid}</TableCell>

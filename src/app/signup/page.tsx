@@ -20,6 +20,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 
 export default function SignupPage() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -40,7 +41,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      await signUp(email, password);
+      await signUp(name, email, password);
       toast({ title: "Success", description: "Account created successfully." });
       router.push('/dashboard');
     } catch (err: any) {
@@ -73,6 +74,17 @@ export default function SignupPage() {
                    <AlertDescription>{error}</AlertDescription>
                  </Alert>
               )}
+              <div className="grid gap-2" suppressHydrationWarning>
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
               <div className="grid gap-2" suppressHydrationWarning>
                 <Label htmlFor="email">Email</Label>
                 <Input
