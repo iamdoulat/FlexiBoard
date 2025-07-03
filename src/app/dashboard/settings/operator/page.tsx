@@ -64,7 +64,11 @@ export default function OperatorSettingsPage() {
           .slice(0, 2);
         
         if (completedItems.length > 0) {
-            setResultMessage(JSON.stringify(completedItems, null, 2));
+            const formattedResult = completedItems.map(item => {
+              const cleanResponse = item.response.replace(/\r|\n/g, ' ').trim();
+              return `ID: ${item.id}, Code: ${item.code}, Response: ${cleanResponse}, Status: ${item.status}`;
+            }).join('\n\n');
+            setResultMessage(formattedResult);
         } else {
             setResultMessage("No recent completed requests found.");
         }
