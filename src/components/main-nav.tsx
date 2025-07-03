@@ -51,6 +51,7 @@ const settingsLinks = {
   subLinks: [
     { href: "/dashboard/settings/operator", label: "Operators" },
     { href: "/dashboard/settings/recharge-history", label: "Recharge History" },
+    { href: "/dashboard/settings/manage-user", label: "Manage User" },
     { href: "/dashboard/settings/manage-reseller", label: "Manage Reseller" },
     { href: "/dashboard/settings/trx-history", label: "Trx History" },
   ],

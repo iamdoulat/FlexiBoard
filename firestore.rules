@@ -2,19 +2,28 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // A user can be created if the user is authenticated and the userId matches their uid.
+    // A user's document can be read by that user.
     match /users/{userId} {
-      allow read, create: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth.uid == userId;
+      // For now, allow any authenticated user to list all users for the manage user page.
+      // TODO: Restrict this to admins only.
+      allow list: if request.auth != null;
+      // Only admins can update user roles. For now, no one can update.
+      allow update: if false; 
     }
-    
-    match /rechargeOperatorSettings/{docId} {
+
+    // Allow authenticated users to manage settings and view history.
+    match /rechargeOperatorSettings/{settingId} {
       allow read, write: if request.auth != null;
     }
 
-    match /balanceCheckSettings/{docId} {
+    match /balanceCheckSettings/{settingId} {
       allow read, write: if request.auth != null;
     }
 
-    match /ussdHistory/{docId} {
+    match /ussdHistory/{historyId} {
       allow read, write: if request.auth != null;
     }
   }
