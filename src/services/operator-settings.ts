@@ -38,16 +38,19 @@ export const onBalanceCheckSettingsUpdate = (callback: (data: Record<string, Bal
     });
 };
 
-export const onUssdHistoryUpdate = (callback: (data: UssdHistoryItem[]) => void): Unsubscribe => {
+export const onUssdHistoryUpdate = (
+    onNext: (data: UssdHistoryItem[]) => void,
+    onError: (error: Error) => void
+): Unsubscribe => {
     const q = query(collection(db, historyCollection), orderBy("created", "desc"), limit(200));
     return onSnapshot(q, (querySnapshot) => {
         const history: UssdHistoryItem[] = [];
         querySnapshot.forEach((doc) => {
             history.push(doc.data() as UssdHistoryItem);
         });
-        callback(history);
+        onNext(history);
     }, (error) => {
         console.error("Error listening to USSD history:", error);
-        callback([]);
+        onError(error);
     });
 };

@@ -30,23 +30,25 @@ export default function RechargeHistoryPage() {
 
   useEffect(() => {
     setLoading(true);
-    const unsubscribe = onUssdHistoryUpdate((data) => {
-      setHistory(data);
-      if (data.length === 0 && !syncing) {
-        setError("No history found in Firestore. Click 'Sync History' to fetch from the API.");
-      } else {
+    const unsubscribe = onUssdHistoryUpdate(
+      (data) => {
+        setHistory(data);
+        setLoading(false);
         setError(null);
+      },
+      (err) => {
+        console.error(err);
+        setError("Failed to load history. Check Firestore permissions.");
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
 
     return () => unsubscribe();
-  }, [syncing]);
+  }, []);
 
   const handleSync = async () => {
     setSyncing(true);
     setError(null);
-    setLoading(true);
     try {
       await getUssdHistory({ limit: 200, page: 1 });
       toast({ title: "Success", description: "History synced successfully." });
@@ -56,7 +58,6 @@ export default function RechargeHistoryPage() {
       toast({ variant: "destructive", title: "Sync Error", description: errorMessage });
     } finally {
       setSyncing(false);
-      setLoading(false);
     }
   };
 
@@ -86,6 +87,82 @@ export default function RechargeHistoryPage() {
     }
   };
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </div>
+      );
+    }
+
+    if (error) {
+      return <div className="text-destructive text-center py-8">{error}</div>;
+    }
+
+    if (paginatedData.length === 0) {
+      return (
+        <div className="text-center py-8 text-muted-foreground">
+          No history to display. Click 'Sync History' to fetch from the API.
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Code</TableHead>
+              <TableHead>Response</TableHead>
+              <TableHead>Device</TableHead>
+              <TableHead>SIM</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedData.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.code}</TableCell>
+                <TableCell>{item.response}</TableCell>
+                <TableCell>{item.device?.slice(-6) ?? 'N/A'}</TableCell>
+                <TableCell>{item.sim}</TableCell>
+                <TableCell>{new Date(item.created * 1000).toLocaleString()}</TableCell>
+                <TableCell>{getStatusBadge(item.status)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-end space-x-2 pt-4">
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -105,71 +182,7 @@ export default function RechargeHistoryPage() {
           </Button>
         </CardHeader>
         <CardContent>
-          {loading && !syncing ? (
-             <div className="space-y-2">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <Skeleton key={i} className="h-12 w-full" />
-                ))}
-            </div>
-          ) : error ? (
-            <div className="text-destructive text-center py-8">{error}</div>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Response</TableHead>
-                    <TableHead>Device</TableHead>
-                    <TableHead>SIM</TableHead>
-                    <TableHead>Time</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedData.length > 0 ? paginatedData.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.code}</TableCell>
-                      <TableCell>{item.response}</TableCell>
-                      <TableCell>{item.device?.slice(-6) ?? 'N/A'}</TableCell>
-                      <TableCell>{item.sim}</TableCell>
-                      <TableCell>{new Date(item.created * 1000).toLocaleString()}</TableCell>
-                      <TableCell>
-                        {getStatusBadge(item.status)}
-                      </TableCell>
-                    </TableRow>
-                  )) : (
-                    <TableRow>
-                        <TableCell colSpan={6} className="text-center">No history to display.</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-              {paginatedData.length > 0 && (
-                <div className="flex items-center justify-end space-x-2 pt-4">
-                  <span className="text-sm text-muted-foreground">
-                      Page {currentPage} of {totalPages > 0 ? totalPages : 1}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePreviousPage}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleNextPage}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
+          {renderContent()}
         </CardContent>
       </Card>
     </div>
