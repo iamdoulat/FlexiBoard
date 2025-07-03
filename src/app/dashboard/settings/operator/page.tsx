@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ import {
   saveRechargeSetting,
   saveBalanceCheckSetting
 } from "@/services/operator-settings";
+import { checkBalance } from "@/services/bipsms";
 import type { RechargeSetting, BalanceCheckSetting } from "@/types/operator-settings";
 
 export default function OperatorSettingsPage() {
@@ -40,6 +41,8 @@ export default function OperatorSettingsPage() {
   const [balanceCheckSettings, setBalanceCheckSettings] = useState<Record<string, Partial<BalanceCheckSetting>>>({});
   const [isRechargeSaving, setIsRechargeSaving] = useState(false);
   const [isBalanceCheckSaving, setIsBalanceCheckSaving] = useState(false);
+  const [isBalanceChecking, setIsBalanceChecking] = useState(false);
+  const [balanceCheckResult, setBalanceCheckResult] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribeRecharge = onRechargeSettingsUpdate(setRechargeSettings);
@@ -121,6 +124,41 @@ export default function OperatorSettingsPage() {
       setIsBalanceCheckSaving(false);
     }
   };
+  
+  const handleBalanceCheckSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!balanceCheckOperator) {
+      toast({ variant: "destructive", title: "Error", description: "Please select an operator." });
+      return;
+    }
+
+    setIsBalanceChecking(true);
+    setBalanceCheckResult(null);
+
+    try {
+      const operatorId = balanceCheckOperator.toUpperCase();
+      const settings = balanceCheckSettings[operatorId];
+      
+      if (!settings) {
+        throw new Error(`Settings for ${balanceCheckOperator} not found.`);
+      }
+
+      const result = await checkBalance(settings);
+      
+      const resultMessage = result.message || JSON.stringify(result, null, 2);
+      setBalanceCheckResult(resultMessage);
+      toast({ title: "Success", description: "Balance check request sent." });
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      console.error("Error checking balance:", error);
+      setBalanceCheckResult(`Error: ${errorMessage}`);
+      toast({ variant: "destructive", title: "Error", description: errorMessage });
+    } finally {
+      setIsBalanceChecking(false);
+    }
+  };
+
 
   const operators = ["ROBI", "GP", "Airtel", "Banglalink", "Skitto"];
 
@@ -185,7 +223,7 @@ export default function OperatorSettingsPage() {
             <CardTitle>Balance Check</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleBalanceCheckSubmit}>
               <div className="grid gap-2">
                 <Label htmlFor="operator-balance">Operator</Label>
                 <Select value={balanceCheckOperator} onValueChange={setBalanceCheckOperator}>
@@ -201,16 +239,16 @@ export default function OperatorSettingsPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full">
-                Balance Check
+              <Button type="submit" className="w-full" disabled={isBalanceChecking}>
+                {isBalanceChecking ? 'Checking...' : 'Balance Check'}
               </Button>
             </form>
             <Separator className="my-4" />
             <div className="space-y-2">
               <h3 className="text-sm font-medium">Result</h3>
-              <div className="rounded-md border bg-muted p-4">
-                <p className="text-sm text-muted-foreground">
-                  Balance will be shown here.
+              <div className="rounded-md border bg-muted p-4 min-h-[60px]">
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {balanceCheckResult ?? "Balance will be shown here."}
                 </p>
               </div>
             </div>
@@ -252,7 +290,7 @@ export default function OperatorSettingsPage() {
                     <Input placeholder="Pin Code" value={rechargeSettings[operator.toUpperCase()]?.pinCode || ''} onChange={(e) => handleRechargeSettingChange(operator, 'pinCode', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Select value={rechargeSettings[operator.toUpperCase()]?.device || ''} onValueChange={(value) => handleRechargeSettingChange(operator, 'device', value)}>
+                    <Select value={rechargeSettings[operator.toUpperCase()]?.device || ''} onValuechange={(value) => handleRechargeSettingChange(operator, 'device', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Device" />
                       </SelectTrigger>
