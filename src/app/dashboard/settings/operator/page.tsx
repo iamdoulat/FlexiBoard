@@ -124,6 +124,13 @@ export default function OperatorSettingsPage() {
 
   const operators = ["ROBI", "GP", "Airtel", "Banglalink", "Skitto"];
 
+  const devices = [
+    { label: "Device 1", value: process.env.NEXT_PUBLIC_DEVICE_1_ID || "" },
+    { label: "Device 2", value: process.env.NEXT_PUBLIC_DEVICE_2_ID || "" },
+    { label: "Device 3", value: process.env.NEXT_PUBLIC_DEVICE_3_ID || "" },
+    { label: "Device 4", value: process.env.NEXT_PUBLIC_DEVICE_4_ID || "" },
+  ].filter(d => d.value);
+
   return (
     <div className="space-y-6">
       <div>
@@ -233,32 +240,33 @@ export default function OperatorSettingsPage() {
                 <TableRow key={operator}>
                   <TableCell className="font-medium">{operator}</TableCell>
                   <TableCell>
-                    <Input placeholder="Code" value={rechargeSettings[operator]?.code || ''} onChange={(e) => handleRechargeSettingChange(operator, 'code', e.target.value)} />
+                    <Input placeholder="Code" value={rechargeSettings[operator.toUpperCase()]?.code || ''} onChange={(e) => handleRechargeSettingChange(operator, 'code', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Mobile" value={rechargeSettings[operator]?.mobile || ''} onChange={(e) => handleRechargeSettingChange(operator, 'mobile', e.target.value)} />
+                    <Input placeholder="Mobile" value={rechargeSettings[operator.toUpperCase()]?.mobile || ''} onChange={(e) => handleRechargeSettingChange(operator, 'mobile', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Value" value={rechargeSettings[operator]?.value || ''} onChange={(e) => handleRechargeSettingChange(operator, 'value', e.target.value)} />
+                    <Input placeholder="Value" value={rechargeSettings[operator.toUpperCase()]?.value || ''} onChange={(e) => handleRechargeSettingChange(operator, 'value', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Pin Code" value={rechargeSettings[operator]?.pinCode || ''} onChange={(e) => handleRechargeSettingChange(operator, 'pinCode', e.target.value)} />
+                    <Input placeholder="Pin Code" value={rechargeSettings[operator.toUpperCase()]?.pinCode || ''} onChange={(e) => handleRechargeSettingChange(operator, 'pinCode', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Select value={rechargeSettings[operator]?.device || ''} onValueChange={(value) => handleRechargeSettingChange(operator, 'device', value)}>
+                    <Select value={rechargeSettings[operator.toUpperCase()]?.device || ''} onValueChange={(value) => handleRechargeSettingChange(operator, 'device', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Device" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="device1">Device 1</SelectItem>
-                        <SelectItem value="device2">Device 2</SelectItem>
-                        <SelectItem value="device3">Device 3</SelectItem>
-                        <SelectItem value="device4">Device 4</SelectItem>
+                        {devices.map((device) => (
+                          <SelectItem key={device.value} value={device.value}>
+                            {device.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Sim Slot" value={rechargeSettings[operator]?.simSlot || ''} onChange={(e) => handleRechargeSettingChange(operator, 'simSlot', e.target.value)} />
+                    <Input placeholder="Sim Slot" value={rechargeSettings[operator.toUpperCase()]?.simSlot || ''} onChange={(e) => handleRechargeSettingChange(operator, 'simSlot', e.target.value)} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -289,26 +297,27 @@ export default function OperatorSettingsPage() {
                 <TableRow key={operator}>
                   <TableCell className="font-medium">{operator}</TableCell>
                   <TableCell>
-                    <Input placeholder="Mobile Number" value={balanceCheckSettings[operator]?.mobileNumber || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'mobileNumber', e.target.value)} />
+                    <Input placeholder="Mobile Number" value={balanceCheckSettings[operator.toUpperCase()]?.mobileNumber || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'mobileNumber', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Code" value={balanceCheckSettings[operator]?.code || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'code', e.target.value)} />
+                    <Input placeholder="Code" value={balanceCheckSettings[operator.toUpperCase()]?.code || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'code', e.target.value)} />
                   </TableCell>
                   <TableCell>
-                    <Select value={balanceCheckSettings[operator]?.device || ''} onValueChange={(value) => handleBalanceCheckSettingChange(operator, 'device', value)}>
+                    <Select value={balanceCheckSettings[operator.toUpperCase()]?.device || ''} onValueChange={(value) => handleBalanceCheckSettingChange(operator, 'device', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Device" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="device1">Device 1</SelectItem>
-                        <SelectItem value="device2">Device 2</SelectItem>
-                        <SelectItem value="device3">Device 3</SelectItem>
-                        <SelectItem value="device4">Device 4</SelectItem>
+                        {devices.map((device) => (
+                          <SelectItem key={device.value} value={device.value}>
+                            {device.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell>
-                    <Input placeholder="Sim Slot" value={balanceCheckSettings[operator]?.simSlot || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'simSlot', e.target.value)} />
+                    <Input placeholder="Sim Slot" value={balanceCheckSettings[operator.toUpperCase()]?.simSlot || ''} onChange={(e) => handleBalanceCheckSettingChange(operator, 'simSlot', e.target.value)} />
                   </TableCell>
                 </TableRow>
               ))}
